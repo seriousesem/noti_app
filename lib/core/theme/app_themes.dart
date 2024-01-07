@@ -7,17 +7,18 @@ ThemeData theme() {
     fontFamily: 'Roboto',
     appBarTheme: appBarTheme(),
     pageTransitionsTheme: pageTransitionsTheme(),
+    elevatedButtonTheme: elevatedButtonTheme(),
   );
 }
 
 AppBarTheme appBarTheme() {
   return const AppBarTheme(
-    color: AppColors.dark17,
+    color: AppColors.mainDark,
     elevation: 0,
     centerTitle: true,
-    iconTheme: IconThemeData(color: AppColors.white),
+    iconTheme: IconThemeData(color: AppColors.mainWhite),
     titleTextStyle: TextStyle(
-      color: AppColors.white,
+      color: AppColors.mainWhite,
       fontFamily: 'Roboto',
       fontSize: 16,
       fontWeight: FontWeight.w700,
@@ -33,4 +34,26 @@ pageTransitionsTheme() {
       TargetPlatform.iOS: FadeUpwardsPageTransitionsBuilder(),
     },
   );
+}
+
+ElevatedButtonThemeData elevatedButtonTheme() {
+  return ElevatedButtonThemeData(
+      style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.resolveWith<Color?>((states) {
+            if (states.contains(MaterialState.disabled)) {
+              return AppColors.greyB8;
+            }
+            if (states.contains(MaterialState.pressed)) {
+              return AppColors.primaryPressed;
+            }
+            if (states.contains(MaterialState.hovered)) {
+              return AppColors.primaryHover;
+            }
+            return AppColors.primaryActive;
+          }),
+          elevation: MaterialStateProperty.resolveWith((states) => null),
+          shape: MaterialStateProperty.resolveWith<OutlinedBorder?>(
+              (states) => RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ))));
 }

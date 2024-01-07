@@ -1,11 +1,14 @@
 
 abstract class Titles{
-  static const String currentWeatherPageTitle = 'Поточна погода';
+  static const String loginScreen = 'Log In';
+  static const String notificationsScreen = 'Notifications';
 }
-abstract class AppStrings{
-  static const String weatherDescription = 'Погодні умови: ';
+abstract class WidgetsText{
+  static const String loginScreenHint = 'Enter current time in hh : mm format';
+  static const String twoDots = ':';
+  static const String confirm = 'Confirm';
 }
 abstract class AppErrors{
-  static const String locationPermissionError = 'Для';
+  static const String timeIsWrong = 'The time is wrong. Try again.';
 
 }

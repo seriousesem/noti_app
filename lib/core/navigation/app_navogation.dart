@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
 
-class AppRoutes {
+import '../../presentation/features/login/login_screen.dart';
+import '../../presentation/features/notifications/notifications_screen.dart';
+
+class AppNavigation {
   static Route onGenerateRoutes(RouteSettings settings) {
     switch (settings.name) {
-      case AppRoutesNames.authorizationScreen:
-        return _materialRoute(const SizedBox());
+      case AppRoutesNames.loginScreen:
+        return _materialRoute(const LoginScreen());
 
       case AppRoutesNames.notificationsScreen:
-        return _materialRoute(const SizedBox());
+        return _materialRoute(const NotificationsScreen());
 
       case AppRoutesNames.addNotificationScreen:
         return _materialRoute(const SizedBox());
 
       default:
-        return _materialRoute(const SizedBox());
+        return _materialRoute(const LoginScreen());
     }
   }
 
@@ -23,7 +26,7 @@ class AppRoutes {
 }
 
 abstract class AppRoutesNames {
-  static const String authorizationScreen = '/authorization_screen';
+  static const String loginScreen = '/login_screen';
   static const String notificationsScreen = '/notifications_screen';
   static const String addNotificationScreen = '/add_notification_screen';
 }
