@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import '../../../core/navigation/app_navogation.dart';
+import '../../../core/navigation/app_navigation.dart';
 import '../../../utils/constants.dart';
 import 'login_event.dart';
 import 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginBloc() : super(const LoginStateLoading()) {
-    on<InitializeLoginState>(_onInitializeLoginState);
-    on<FirstHourChanged>(_onFirstHourChanged);
-    on<SecondHourChanged>(_onSecondHourChanged);
-    on<FirstMinuteChanged>(_onFirstMinuteChanged);
-    on<SecondMinuteChanged>(_onSecondMinuteChanged);
-    on<LoginConfirmed>(_onLoginConfirmed);
+    on<InitializeLoginStateEvent>(_initializeLoginState);
+    on<FirstHourChangedEvent>(_changeFirstHour);
+    on<SecondHourChangedEvent>(_changeSecondHour);
+    on<FirstMinuteChangedEvent>(_changeFirstMinute);
+    on<SecondMinuteChangedEvent>(_changeSecondMinute);
+    on<LoginConfirmedEvent>(_confirmLogin);
   }
 
-  _onInitializeLoginState(LoginEvent event, Emitter<LoginState> emit) async {
+  _initializeLoginState(LoginEvent event, Emitter<LoginState> emit) async {
     final currentDateTime = DateTime.now();
     final currentTime = DateFormat('HH:mm').format(currentDateTime);
     emit(state.copyWith(
@@ -28,7 +28,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         )));
   }
 
-  _onFirstHourChanged(FirstHourChanged event, Emitter<LoginState> emit) {
+  _changeFirstHour(FirstHourChangedEvent event, Emitter<LoginState> emit) {
     final loginModel = state.loginModel.copyWith(
       firstHour: event.firstHour,
     );
@@ -36,38 +36,38 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       loginModel: loginModel,
     ));
     if (state.loginModel.firstHour.isNotEmpty) {
-      _onChangeFocusNode(
+      _changeFocusNode(
           context: event.context,
           focusNode: state.loginModel.secondHourFocusNode);
     }
   }
 
-  _onSecondHourChanged(SecondHourChanged event, Emitter<LoginState> emit) {
+  _changeSecondHour(SecondHourChangedEvent event, Emitter<LoginState> emit) {
     final loginModel = state.loginModel.copyWith(secondHour: event.secondHour);
     emit(state.copyWith(
       loginModel: loginModel,
     ));
     if (state.loginModel.secondHour.isNotEmpty) {
-      _onChangeFocusNode(
+      _changeFocusNode(
           context: event.context,
           focusNode: state.loginModel.firstMinuteFocusNode);
     }
   }
 
-  _onFirstMinuteChanged(FirstMinuteChanged event, Emitter<LoginState> emit) {
+  _changeFirstMinute(FirstMinuteChangedEvent event, Emitter<LoginState> emit) {
     final loginModel =
         state.loginModel.copyWith(firstMinute: event.firstMinute);
     emit(state.copyWith(
       loginModel: loginModel,
     ));
     if (state.loginModel.firstMinute.isNotEmpty) {
-      _onChangeFocusNode(
+      _changeFocusNode(
           context: event.context,
           focusNode: state.loginModel.secondMinuteFocusNode);
     }
   }
 
-  _onSecondMinuteChanged(SecondMinuteChanged event, Emitter<LoginState> emit) {
+  _changeSecondMinute(SecondMinuteChangedEvent event, Emitter<LoginState> emit) {
     final loginModel =
         state.loginModel.copyWith(secondMinute: event.secondMinute);
     emit(state.copyWith(
@@ -78,15 +78,18 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     }
   }
 
-  _onChangeFocusNode(
+  _changeFocusNode(
       {required BuildContext context, required FocusNode? focusNode}) {
     FocusScope.of(context).requestFocus(focusNode);
   }
 
-  _onLoginConfirmed(LoginConfirmed event, Emitter<LoginState> emit) {
+  _confirmLogin(LoginConfirmedEvent event, Emitter<LoginState> emit) {
     final enteredTime =
         "${state.loginModel.firstHour}${state.loginModel.secondHour}:${state.loginModel.firstMinute}${state.loginModel.secondMinute}";
     if (enteredTime == state.currentTime) {
+      emit(
+        state.copyWith(error: ''),
+      );
       Navigator.pushNamed(event.context, AppRoutesNames.notificationsScreen);
     } else {
       emit(

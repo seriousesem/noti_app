@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:noti_app/core/theme/app_colors.dart';
 import 'package:noti_app/presentation/features/login/login_state.dart';
 import 'package:noti_app/presentation/widgets/app_bar.dart';
 import '../../../utils/constants.dart';
 import '../../widgets/elevated_button_without_icon.dart';
+import '../../widgets/error_message.dart';
 import 'login_bloc.dart';
 import 'login_event.dart';
 
@@ -15,7 +15,8 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (BuildContext context) => LoginBloc()..add(const InitializeLoginState()),
+      create: (BuildContext context) =>
+          LoginBloc()..add(const InitializeLoginStateEvent()),
       child: Builder(
         builder: (context) => Scaffold(
           resizeToAvoidBottomInset: false,
@@ -43,7 +44,7 @@ class _LoginScreenWidget extends StatelessWidget {
           _CurrentTimeWidget(),
           _TimePlaceholderWidget(),
           Spacer(),
-          _ErrorWidget(),
+          _ErrorMessageWidget(),
           _ConfirmButton(),
         ],
       ),
@@ -151,8 +152,9 @@ class _FirstHourWidget extends StatelessWidget {
     return BlocBuilder<LoginBloc, LoginState>(
       builder: (_, state) => _TimeInputWidget(
         focusNode: null,
-        onChangeAction: (firstHour) =>
-            context.read<LoginBloc>().add(FirstHourChanged(firstHour = firstHour, context = context)),
+        onChangeAction: (firstHour) => context
+            .read<LoginBloc>()
+            .add(FirstHourChangedEvent(firstHour = firstHour, context = context)),
       ),
     );
   }
@@ -166,8 +168,9 @@ class _SecondHourWidget extends StatelessWidget {
     return BlocBuilder<LoginBloc, LoginState>(
       builder: (_, state) => _TimeInputWidget(
         focusNode: state.loginModel.secondHourFocusNode,
-        onChangeAction: (secondHour) =>
-            context.read<LoginBloc>().add(SecondHourChanged(secondHour = secondHour, context = context)),
+        onChangeAction: (secondHour) => context
+            .read<LoginBloc>()
+            .add(SecondHourChangedEvent(secondHour = secondHour, context = context)),
       ),
     );
   }
@@ -181,8 +184,8 @@ class _FirstMinuteWidget extends StatelessWidget {
     return BlocBuilder<LoginBloc, LoginState>(
       builder: (_, state) => _TimeInputWidget(
         focusNode: state.loginModel.firstMinuteFocusNode,
-        onChangeAction: (firstMinute) =>
-            context.read<LoginBloc>().add(FirstMinuteChanged(firstMinute = firstMinute, context = context)),
+        onChangeAction: (firstMinute) => context.read<LoginBloc>().add(
+            FirstMinuteChangedEvent(firstMinute = firstMinute, context = context)),
       ),
     );
   }
@@ -196,15 +199,17 @@ class _SecondMinuteWidget extends StatelessWidget {
     return BlocBuilder<LoginBloc, LoginState>(
       builder: (_, state) => _TimeInputWidget(
         focusNode: state.loginModel.secondMinuteFocusNode,
-        onChangeAction: (secondMinute) =>
-            context.read<LoginBloc>().add(SecondMinuteChanged(secondMinute = secondMinute, context = context)),
+        onChangeAction: (secondMinute) => context.read<LoginBloc>().add(
+            SecondMinuteChangedEvent(
+                secondMinute = secondMinute, context = context)),
       ),
     );
   }
 }
 
 class _TimeInputWidget extends StatelessWidget {
-  const _TimeInputWidget({required this.onChangeAction, required this.focusNode});
+  const _TimeInputWidget(
+      {required this.onChangeAction, required this.focusNode});
 
   final FocusNode? focusNode;
   final Function(String value) onChangeAction;
@@ -230,7 +235,7 @@ class _TimeInputWidget extends StatelessWidget {
             fillColor: AppColors.mainWhite,
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: AppColors.greyE6),
+              borderSide: const BorderSide(color: AppColors.lightGrey),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
@@ -251,48 +256,15 @@ class _TimeInputWidget extends StatelessWidget {
   }
 }
 
-class _ErrorWidget extends StatelessWidget {
-  const _ErrorWidget();
+class _ErrorMessageWidget extends StatelessWidget {
+  const _ErrorMessageWidget();
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<LoginBloc, LoginState>(
         buildWhen: (previous, current) => previous.error != current.error,
         builder: (_, state) {
-          return state.error.isNotEmpty
-              ? Padding(
-                  padding: const EdgeInsets.only(bottom: 32),
-                  child: Container(
-                    width: double.infinity,
-                    height: 48,
-                    decoration: const BoxDecoration(color: Color(0xFFF3F3F4)),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.error_outline,
-                            color: AppColors.mainRed,
-                            size: 24,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 6),
-                            child: Text(
-                              state.error,
-                              style: const TextStyle(
-                                color: AppColors.mainRed,
-                                fontSize: 14,
-                                fontFamily: 'Roboto',
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                )
-              : const SizedBox.shrink();
+          return buildErrorMessageWidget(errorMessage: state.error);
         });
   }
 }
@@ -311,7 +283,7 @@ class _ConfirmButton extends StatelessWidget {
         buttonText: WidgetsText.confirm,
         isActive: isActive,
         buttonAction: () {
-          context.read<LoginBloc>().add(LoginConfirmed(context));
+          context.read<LoginBloc>().add(LoginConfirmedEvent(context));
         },
       );
     });

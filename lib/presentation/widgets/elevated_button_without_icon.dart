@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/app_colors.dart';
+import 'button_text.dart';
 
 buildElevatedButtonWithoutIcon({
   required String buttonText,
@@ -15,16 +15,7 @@ buildElevatedButtonWithoutIcon({
             height: 56,
             child: ElevatedButton(
               onPressed: isActive ? buttonAction : null,
-              child: Text(
-                buttonText,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: AppColors.mainWhite,
-                  fontSize: 16,
-                  fontFamily: 'Roboto',
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
+              child: buildButtonText(buttonText: buttonText),
             ),
           ),
         ),

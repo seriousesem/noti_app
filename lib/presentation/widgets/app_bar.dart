@@ -8,3 +8,4 @@ buildAppBar({String title = '', Widget? leading}) {
     leading: leading,
   );
 }
+

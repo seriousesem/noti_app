@@ -54,6 +54,6 @@ ElevatedButtonThemeData elevatedButtonTheme() {
           elevation: MaterialStateProperty.resolveWith((states) => null),
           shape: MaterialStateProperty.resolveWith<OutlinedBorder?>(
               (states) => RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(8),
                   ))));
 }
