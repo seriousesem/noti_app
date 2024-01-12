@@ -1,32 +1,34 @@
 import 'package:equatable/equatable.dart';
-import '../../../domain/models/login/login_model.dart';
+
+import '../../../domain/models/time/time_model.dart';
+
 
 final class LoginState extends Equatable {
   const LoginState({
     this.currentTime = '',
-    this.loginModel = const LoginModel(),
+    this.timeModel = const TimeModel(),
     this.error = '',
   });
 
   final String currentTime;
-  final LoginModel loginModel;
+  final TimeModel timeModel;
   final String error;
 
   LoginState copyWith({
     String? currentTime,
-    LoginModel? loginModel,
+    TimeModel? timeModel,
     String? error,
   }) =>
       LoginState(
         currentTime: currentTime ?? this.currentTime,
-        loginModel: loginModel ?? this.loginModel,
+        timeModel: timeModel ?? this.timeModel,
         error: error ?? this.error,
       );
 
   @override
   List<Object?> get props => [
         currentTime,
-        loginModel,
+        timeModel,
         error,
       ];
 }
@@ -38,11 +40,11 @@ final class LoginStateLoading extends LoginState {
 final class LoginStateSuccess extends LoginState {
   const LoginStateSuccess(
     String currentTime,
-    LoginModel loginModel,
+    TimeModel timeModel,
     bool isValid,
   ) : super(
           currentTime: currentTime,
-          loginModel: loginModel,
+          timeModel: timeModel,
         );
 }
 

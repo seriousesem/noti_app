@@ -19,7 +19,7 @@ final class NotificationModel extends Equatable {
   final String? iconAssets;
   final String? iconBackgroundColor;
 
-  NotificationModel copyWith(
+  NotificationModel copyWith({
     int? id,
     String? type,
     String? recurringType,
@@ -27,7 +27,7 @@ final class NotificationModel extends Equatable {
     String? message,
     String? iconAssets,
     String? iconBackgroundColor,
-  ) =>
+  }) =>
       NotificationModel(
         id: id ?? this.id,
         type: type ?? this.type,

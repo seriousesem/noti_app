@@ -113,7 +113,7 @@ buildNotificationWidget({
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    WidgetsText.message,
+                    '${WidgetsText.message}: ',
                     style: TextStyle(
                       color: AppColors.darkGrey,
                       fontSize: 14,

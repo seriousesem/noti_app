@@ -1,8 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
-final class LoginModel extends Equatable {
-  const LoginModel({
+final class TimeModel extends Equatable {
+  const TimeModel({
     this.firstHour = '',
     this.secondHour = '',
     this.secondHourFocusNode,
@@ -20,7 +20,7 @@ final class LoginModel extends Equatable {
   final String secondMinute;
   final FocusNode? secondMinuteFocusNode;
 
-  LoginModel copyWith({
+  TimeModel copyWith({
     String? firstHour,
     String? secondHour,
     FocusNode? secondHourFocusNode,
@@ -29,7 +29,7 @@ final class LoginModel extends Equatable {
     String? secondMinute,
     FocusNode? secondMinuteFocusNode,
   }) =>
-      LoginModel(
+      TimeModel(
         firstHour: firstHour ?? this.firstHour,
         secondHour: secondHour ?? this.secondHour,
         secondHourFocusNode: secondHourFocusNode ?? this.secondHourFocusNode,
@@ -50,4 +50,16 @@ final class LoginModel extends Equatable {
         secondMinute,
         secondMinuteFocusNode
       ];
+
+  @override
+  String toString() => '$firstHour$secondHour:$firstMinute$secondMinute';
+
+  factory TimeModel.fromString(String time) {
+    return TimeModel(
+      firstHour: time.characters.elementAt(0),
+      secondHour: time.characters.elementAt(1),
+      firstMinute: time.characters.elementAt(3),
+      secondMinute: time.characters.elementAt(4),
+    );
+  }
 }

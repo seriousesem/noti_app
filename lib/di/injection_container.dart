@@ -5,6 +5,8 @@ import 'package:noti_app/presentation/features/notifications/notifications_bloc.
 import '../data/database/database_service.dart';
 import '../data/repository/notifications_repository_impl.dart';
 import '../domain/repository/notifications_repository.dart';
+import '../presentation/features/create_edit_notification/create_edit_notification_bloc.dart';
+
 
 final getIt = GetIt.instance;
 
@@ -17,10 +19,13 @@ Future<void> initializeDependencies() async {
   getIt.registerSingleton<NotificationsRepository>(
       NotificationsRepositoryImpl(getIt()));
   // Blocs
-  getIt.registerSingleton<LoginBloc>(
-    LoginBloc(),
+  getIt.registerFactory<LoginBloc>(
+    () => LoginBloc(),
   );
-  getIt.registerSingleton<NotificationsBloc>(
-    NotificationsBloc(getIt()),
+  getIt.registerFactory<NotificationsBloc>(
+    () => NotificationsBloc(getIt()),
+  );
+  getIt.registerFactory<CreateOrEditNotificationBloc>(
+    () => CreateOrEditNotificationBloc(getIt()),
   );
 }

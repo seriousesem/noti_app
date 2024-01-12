@@ -5,7 +5,7 @@ import '../../../utils/constants.dart';
 
 final class NotificationsState extends Equatable {
   const NotificationsState({
-    this.selectedNotificationsType = NotificationsTypes.oneTime,
+    this.selectedNotificationsType = NotificationsType.oneTime,
     this.oneTimeNotifications,
     this.error,
   });
@@ -37,10 +37,10 @@ final class NotificationsStateLoading extends NotificationsState {
 
 final class NotificationsStateSuccess extends NotificationsState {
   const NotificationsStateSuccess(
-      List<NotificationModel> oneTimeNotifications)
+      {required List<NotificationModel> oneTimeNotifications})
       : super(oneTimeNotifications: oneTimeNotifications);
 }
 
 final class NotificationsStateError extends NotificationsState {
-  const NotificationsStateError(String error) : super(error: error);
+  const NotificationsStateError({required String error}) : super(error: error);
 }

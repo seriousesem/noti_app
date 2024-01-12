@@ -8,6 +8,7 @@ ThemeData theme() {
     appBarTheme: appBarTheme(),
     pageTransitionsTheme: pageTransitionsTheme(),
     elevatedButtonTheme: elevatedButtonTheme(),
+    outlinedButtonTheme: outlinedButtonTheme(),
   );
 }
 
@@ -55,5 +56,17 @@ ElevatedButtonThemeData elevatedButtonTheme() {
           shape: MaterialStateProperty.resolveWith<OutlinedBorder?>(
               (states) => RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
+                  ))));
+}
+
+OutlinedButtonThemeData outlinedButtonTheme() {
+  return OutlinedButtonThemeData(
+      style: ButtonStyle(
+          side: MaterialStateProperty.resolveWith<BorderSide>((states) => const BorderSide(
+            color: AppColors.primaryActive,
+          )),
+          shape: MaterialStateProperty.resolveWith<OutlinedBorder?>(
+              (states) => RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
                   ))));
 }

@@ -24,9 +24,8 @@ class SwitchNotificationsTypeEvent extends NotificationsEvent {
   final String notificationsType;
 }
 
-class AddNotificationEvent extends NotificationsEvent {
-  const AddNotificationEvent({required this.context});
-
+class GoToCreateNotificationEvent extends NotificationsEvent {
+  const GoToCreateNotificationEvent({required this.context});
   final BuildContext context;
 }
 
@@ -36,16 +35,20 @@ class DeleteNotificationEvent extends NotificationsEvent {
   final NotificationModel notification;
 }
 
-class EditNotificationEvent extends NotificationsEvent {
-  const EditNotificationEvent({required this.notification});
+class GoToEditNotificationEvent extends NotificationsEvent {
+  const GoToEditNotificationEvent(
+      {required this.context, required this.notification});
 
+  final BuildContext context;
   final NotificationModel notification;
 }
 
 class GoToRecurringNotificationsEvent extends NotificationsEvent {
-  const GoToRecurringNotificationsEvent({required this.context, required this.recurringType,});
+  const GoToRecurringNotificationsEvent({
+    required this.context,
+    required this.recurringType,
+  });
 
   final BuildContext context;
   final String recurringType;
 }
-

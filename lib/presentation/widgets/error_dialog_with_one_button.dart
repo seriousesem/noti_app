@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../utils/constants.dart';
 
 buildErrorDialogWithOneButton({
@@ -8,7 +7,7 @@ buildErrorDialogWithOneButton({
 }) {
   return AlertDialog(
     title: const Text(
-      Titles.errorDialog,
+      WidgetsText.errorDialog,
       textAlign: TextAlign.center,
     ),
     titleTextStyle: const TextStyle(

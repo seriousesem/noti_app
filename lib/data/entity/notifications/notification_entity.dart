@@ -22,23 +22,23 @@ class NotificationEntity {
 
   factory NotificationEntity.fromMap(Map<String, dynamic> map) =>
       NotificationEntity(
-        id: map[NotificationEntityKeys.id],
-        type: map[NotificationEntityKeys.type],
-        recurringType: map[NotificationEntityKeys.recurringType],
-        time: map[NotificationEntityKeys.time],
-        message: map[NotificationEntityKeys.message],
-        iconAssets: map[NotificationEntityKeys.iconAssets],
-        iconBackgroundColor: map[NotificationEntityKeys.iconBackgroundColor],
+        id: map[NotificationEntityKey.id],
+        type: map[NotificationEntityKey.type],
+        recurringType: map[NotificationEntityKey.recurringType],
+        time: map[NotificationEntityKey.time],
+        message: map[NotificationEntityKey.message],
+        iconAssets: map[NotificationEntityKey.iconAssets],
+        iconBackgroundColor: map[NotificationEntityKey.iconBackgroundColor],
       );
 
   Map<String, dynamic> toMap() => {
-        NotificationEntityKeys.id: id,
-        NotificationEntityKeys.type: type,
-        NotificationEntityKeys.recurringType: recurringType,
-        NotificationEntityKeys.time: time,
-        NotificationEntityKeys.message: message,
-        NotificationEntityKeys.iconAssets: iconAssets,
-        NotificationEntityKeys.iconBackgroundColor: iconBackgroundColor,
+        NotificationEntityKey.id: id,
+        NotificationEntityKey.type: type,
+        NotificationEntityKey.recurringType: recurringType,
+        NotificationEntityKey.time: time,
+        NotificationEntityKey.message: message,
+        NotificationEntityKey.iconAssets: iconAssets,
+        NotificationEntityKey.iconBackgroundColor: iconBackgroundColor,
       };
 
   factory NotificationEntity.fromModel(NotificationModel notificationModel) =>

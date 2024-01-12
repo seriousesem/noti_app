@@ -7,14 +7,14 @@ class DataBaseService {
   static const _databaseVersion = 1;
   static const _databaseName = 'noti.db';
   static const _tableName = 'notifications_table';
-  static const _columnId = NotificationEntityKeys.id;
-  static const _columnType = NotificationEntityKeys.type;
-  static const _columnRecurringType = NotificationEntityKeys.recurringType;
-  static const _columnTime = NotificationEntityKeys.time;
-  static const _columnMessage = NotificationEntityKeys.message;
-  static const _columnIconAssets = NotificationEntityKeys.iconAssets;
+  static const _columnId = NotificationEntityKey.id;
+  static const _columnType = NotificationEntityKey.type;
+  static const _columnRecurringType = NotificationEntityKey.recurringType;
+  static const _columnTime = NotificationEntityKey.time;
+  static const _columnMessage = NotificationEntityKey.message;
+  static const _columnIconAssets = NotificationEntityKey.iconAssets;
   static const _columnIconBackgroundColor =
-      NotificationEntityKeys.iconBackgroundColor;
+      NotificationEntityKey.iconBackgroundColor;
   static Database? _database;
 
   Future<Database> get database async {
@@ -23,12 +23,13 @@ class DataBaseService {
   }
 
   Future<Database> _initDatabase() async {
-    return openDatabase(
-      join(await getDatabasesPath(), _databaseName),
-      onCreate: (db, _) async {
-        await db.execute('''
+    try {
+      return openDatabase(
+        join(await getDatabasesPath(), _databaseName),
+        onCreate: (db, _) async {
+          await db.execute('''
           CREATE TABLE $_tableName (
-            $_columnId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+            $_columnId INTEGER PRIMARY KEY AUTOINCREMENT,
             $_columnType TEXT NOT NULL,
             $_columnRecurringType TEXT,
             $_columnTime TEXT NOT NULL,
@@ -37,47 +38,66 @@ class DataBaseService {
             $_columnIconBackgroundColor TEXT
           )
         ''');
-      },
-      version: _databaseVersion,
-    );
+        },
+        version: _databaseVersion,
+      );
+    } catch (e) {
+      throw e.toString();
+    }
   }
 
   Future<List<NotificationEntity>> getAllNotifications() async {
-    final db = await database;
-    final List<Map<String, dynamic>> resultMaps = await db.query(_tableName);
-    if (resultMaps.isEmpty) {
-      return List.empty();
+    try {
+      final db = await database;
+      final List<Map<String, dynamic>> resultMaps = await db.query(_tableName);
+      if (resultMaps.isEmpty) {
+        return List.empty();
+      }
+      return List.generate(resultMaps.length,
+          (index) => NotificationEntity.fromMap(resultMaps[index]));
+    } catch (e) {
+      throw e.toString();
     }
-    return List.generate(resultMaps.length,
-        (index) => NotificationEntity.fromMap(resultMaps[index]));
   }
 
   Future<int> insertNotification(NotificationEntity notificationEntity) async {
-    final db = await database;
-    return await db.insert(
-      _tableName,
-      notificationEntity.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+    try {
+      final db = await database;
+      return await db.insert(
+        _tableName,
+        notificationEntity.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    } catch (e) {
+      throw e.toString();
+    }
   }
 
   Future<int> updateNotification(NotificationEntity notificationEntity) async {
-    final db = await database;
-    return await db.update(
-      _tableName,
-      notificationEntity.toMap(),
-      where: '$_columnId = ?',
-      whereArgs: [notificationEntity.id],
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+    try {
+      final db = await database;
+      return await db.update(
+        _tableName,
+        notificationEntity.toMap(),
+        where: '$_columnId = ?',
+        whereArgs: [notificationEntity.id],
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    } catch (e) {
+      throw e.toString();
+    }
   }
 
   Future<int> deleteNotification(NotificationEntity notificationEntity) async {
-    final db = await database;
-    return await db.delete(
-      _tableName,
-      where: '$_columnId = ?',
-      whereArgs: [notificationEntity.id],
-    );
+    try {
+      final db = await database;
+      return await db.delete(
+        _tableName,
+        where: '$_columnId = ?',
+        whereArgs: [notificationEntity.id],
+      );
+    } catch (e) {
+      throw e.toString();
+    }
   }
 }

@@ -21,7 +21,7 @@ class LoginScreen extends StatelessWidget {
         builder: (context) => Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: buildAppBar(
-            title: Titles.loginScreen,
+            title: WidgetsText.loginScreen,
           ),
           body: const _LoginScreenWidget(),
         ),
@@ -59,7 +59,7 @@ class _ScreenTitleWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Center(
       child: Text(
-        Titles.loginScreen,
+        WidgetsText.loginScreen,
         style: TextStyle(
           color: AppColors.mainDark,
           fontSize: 24,
@@ -167,7 +167,7 @@ class _SecondHourWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<LoginBloc, LoginState>(
       builder: (_, state) => _TimeInputWidget(
-        focusNode: state.loginModel.secondHourFocusNode,
+        focusNode: state.timeModel.secondHourFocusNode,
         onChangeAction: (secondHour) => context
             .read<LoginBloc>()
             .add(SecondHourChangedEvent(secondHour = secondHour, context = context)),
@@ -183,7 +183,7 @@ class _FirstMinuteWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<LoginBloc, LoginState>(
       builder: (_, state) => _TimeInputWidget(
-        focusNode: state.loginModel.firstMinuteFocusNode,
+        focusNode: state.timeModel.firstMinuteFocusNode,
         onChangeAction: (firstMinute) => context.read<LoginBloc>().add(
             FirstMinuteChangedEvent(firstMinute = firstMinute, context = context)),
       ),
@@ -198,7 +198,7 @@ class _SecondMinuteWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<LoginBloc, LoginState>(
       builder: (_, state) => _TimeInputWidget(
-        focusNode: state.loginModel.secondMinuteFocusNode,
+        focusNode: state.timeModel.secondMinuteFocusNode,
         onChangeAction: (secondMinute) => context.read<LoginBloc>().add(
             SecondMinuteChangedEvent(
                 secondMinute = secondMinute, context = context)),
@@ -275,10 +275,10 @@ class _ConfirmButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<LoginBloc, LoginState>(builder: (_, state) {
-      final isActive = state.loginModel.firstHour.isNotEmpty &&
-          state.loginModel.secondHour.isNotEmpty &&
-          state.loginModel.firstMinute.isNotEmpty &&
-          state.loginModel.secondMinute.isNotEmpty;
+      final isActive = state.timeModel.firstHour.isNotEmpty &&
+          state.timeModel.secondHour.isNotEmpty &&
+          state.timeModel.firstMinute.isNotEmpty &&
+          state.timeModel.secondMinute.isNotEmpty;
       return buildElevatedButtonWithoutIcon(
         buttonText: WidgetsText.confirm,
         isActive: isActive,

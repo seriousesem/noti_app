@@ -21,7 +21,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     final currentTime = DateFormat('HH:mm').format(currentDateTime);
     emit(state.copyWith(
         currentTime: currentTime,
-        loginModel: state.loginModel.copyWith(
+        timeModel: state.timeModel.copyWith(
           secondHourFocusNode: FocusNode(),
           firstMinuteFocusNode: FocusNode(),
           secondMinuteFocusNode: FocusNode(),
@@ -29,51 +29,51 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   }
 
   _changeFirstHour(FirstHourChangedEvent event, Emitter<LoginState> emit) {
-    final loginModel = state.loginModel.copyWith(
+    final timeModel = state.timeModel.copyWith(
       firstHour: event.firstHour,
     );
     emit(state.copyWith(
-      loginModel: loginModel,
+      timeModel: timeModel,
     ));
-    if (state.loginModel.firstHour.isNotEmpty) {
+    if (state.timeModel.firstHour.isNotEmpty) {
       _changeFocusNode(
           context: event.context,
-          focusNode: state.loginModel.secondHourFocusNode);
+          focusNode: state.timeModel.secondHourFocusNode);
     }
   }
 
   _changeSecondHour(SecondHourChangedEvent event, Emitter<LoginState> emit) {
-    final loginModel = state.loginModel.copyWith(secondHour: event.secondHour);
+    final timeModel = state.timeModel.copyWith(secondHour: event.secondHour);
     emit(state.copyWith(
-      loginModel: loginModel,
+      timeModel: timeModel,
     ));
-    if (state.loginModel.secondHour.isNotEmpty) {
+    if (state.timeModel.secondHour.isNotEmpty) {
       _changeFocusNode(
           context: event.context,
-          focusNode: state.loginModel.firstMinuteFocusNode);
+          focusNode: state.timeModel.firstMinuteFocusNode);
     }
   }
 
   _changeFirstMinute(FirstMinuteChangedEvent event, Emitter<LoginState> emit) {
-    final loginModel =
-        state.loginModel.copyWith(firstMinute: event.firstMinute);
+    final timeModel =
+        state.timeModel.copyWith(firstMinute: event.firstMinute);
     emit(state.copyWith(
-      loginModel: loginModel,
+      timeModel: timeModel,
     ));
-    if (state.loginModel.firstMinute.isNotEmpty) {
+    if (state.timeModel.firstMinute.isNotEmpty) {
       _changeFocusNode(
           context: event.context,
-          focusNode: state.loginModel.secondMinuteFocusNode);
+          focusNode: state.timeModel.secondMinuteFocusNode);
     }
   }
 
   _changeSecondMinute(SecondMinuteChangedEvent event, Emitter<LoginState> emit) {
-    final loginModel =
-        state.loginModel.copyWith(secondMinute: event.secondMinute);
+    final timeModel =
+        state.timeModel.copyWith(secondMinute: event.secondMinute);
     emit(state.copyWith(
-      loginModel: loginModel,
+      timeModel: timeModel,
     ));
-    if (state.loginModel.secondMinute.isNotEmpty) {
+    if (state.timeModel.secondMinute.isNotEmpty) {
       FocusScope.of(event.context).unfocus();
     }
   }
@@ -84,13 +84,12 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   }
 
   _confirmLogin(LoginConfirmedEvent event, Emitter<LoginState> emit) {
-    final enteredTime =
-        "${state.loginModel.firstHour}${state.loginModel.secondHour}:${state.loginModel.firstMinute}${state.loginModel.secondMinute}";
+    final enteredTime = state.timeModel.toString();
     if (enteredTime == state.currentTime) {
       emit(
         state.copyWith(error: ''),
       );
-      Navigator.pushNamed(event.context, AppRoutesNames.notificationsScreen);
+      Navigator.popAndPushNamed(event.context, AppRoutesNames.notificationsScreen);
     } else {
       emit(
         state.copyWith(error: AppErrors.timeIsWrong),

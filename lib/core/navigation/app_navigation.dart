@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:noti_app/presentation/features/create_edit_notification/create_edit_notification_screen.dart';
 
+import '../../domain/models/notification/notification_model.dart';
 import '../../presentation/features/login/login_screen.dart';
 import '../../presentation/features/notifications/notifications_screen.dart';
 
@@ -12,8 +14,9 @@ class AppNavigation {
       case AppRoutesNames.notificationsScreen:
         return _materialRoute(const NotificationsScreen());
 
-      case AppRoutesNames.addNotificationScreen:
-        return _materialRoute(const SizedBox());
+      case AppRoutesNames.createOrEditNotificationScreen:
+        return _materialRoute(CreateOrEditNotificationScreen(
+            notification: settings.arguments as NotificationModel));
 
       default:
         return _materialRoute(const LoginScreen());
@@ -28,5 +31,5 @@ class AppNavigation {
 abstract class AppRoutesNames {
   static const String loginScreen = '/login_screen';
   static const String notificationsScreen = '/notifications_screen';
-  static const String addNotificationScreen = '/add_notification_screen';
+  static const String createOrEditNotificationScreen = '/crete_or_edit_notification_screen';
 }
