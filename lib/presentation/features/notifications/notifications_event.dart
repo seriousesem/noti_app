@@ -26,6 +26,7 @@ class SwitchNotificationsTypeEvent extends NotificationsEvent {
 
 class GoToCreateNotificationEvent extends NotificationsEvent {
   const GoToCreateNotificationEvent({required this.context});
+
   final BuildContext context;
 }
 
@@ -52,3 +53,4 @@ class GoToRecurringNotificationsEvent extends NotificationsEvent {
   final BuildContext context;
   final String recurringType;
 }
+

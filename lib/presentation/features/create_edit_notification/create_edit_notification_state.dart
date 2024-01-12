@@ -5,10 +5,12 @@ import '../../../domain/models/time/time_model.dart';
 
 final class CreateOrEditNotificationsState extends Equatable {
   const CreateOrEditNotificationsState({
-    this.notification ,
+    this.notification,
     this.notificationId,
     this.currentTime = '',
     this.timeModel = const TimeModel(),
+    this.selectedIcon = '',
+    this.selectedIconBackgroundColor = '',
     this.error = '',
   });
 
@@ -16,6 +18,8 @@ final class CreateOrEditNotificationsState extends Equatable {
   final int? notificationId;
   final String currentTime;
   final TimeModel timeModel;
+  final String selectedIconBackgroundColor;
+  final String selectedIcon;
   final String error;
 
   CreateOrEditNotificationsState copyWith({
@@ -23,6 +27,8 @@ final class CreateOrEditNotificationsState extends Equatable {
     int? notificationId,
     String? currentTime,
     TimeModel? timeModel,
+    String? selectedIconBackgroundColor,
+    String? selectedIcon,
     String? error,
   }) =>
       CreateOrEditNotificationsState(
@@ -30,24 +36,37 @@ final class CreateOrEditNotificationsState extends Equatable {
         notificationId: notificationId ?? this.notificationId,
         currentTime: currentTime ?? this.currentTime,
         timeModel: timeModel ?? this.timeModel,
+        selectedIconBackgroundColor:
+            selectedIconBackgroundColor ?? this.selectedIconBackgroundColor,
+        selectedIcon: selectedIcon ?? this.selectedIcon,
         error: error ?? this.error,
       );
 
   @override
-  List<Object?> get props =>
-      [notification, notificationId, currentTime, timeModel, error];
+  List<Object?> get props => [
+        notification,
+        notificationId,
+        currentTime,
+        timeModel,
+        selectedIconBackgroundColor,
+        selectedIcon,
+        error
+      ];
 }
 
-final class CreateOrEditNotificationsStateLoading extends CreateOrEditNotificationsState {
+final class CreateOrEditNotificationsStateLoading
+    extends CreateOrEditNotificationsState {
   const CreateOrEditNotificationsStateLoading();
 }
 
-final class CreateOrEditNotificationsStateSuccess extends CreateOrEditNotificationsState {
+final class CreateOrEditNotificationsStateSuccess
+    extends CreateOrEditNotificationsState {
   const CreateOrEditNotificationsStateSuccess({required int notificationId})
       : super(notificationId: notificationId);
 }
 
-final class CreateOrEditNotificationsStateError extends CreateOrEditNotificationsState {
+final class CreateOrEditNotificationsStateError
+    extends CreateOrEditNotificationsState {
   const CreateOrEditNotificationsStateError({required String error})
       : super(error: error);
 }

@@ -16,11 +16,17 @@ abstract class WidgetsText {
   static const String typeTime = 'Type time';
   static const String icon = 'Icon';
   static const String selectIcon = 'Select icon';
+  static const String iconStyle = 'Icon Style';
+  static const String saveChanges = 'Save changes';
+  static const String backgroundColors = 'Background colors';
+  static const String selectIcons = 'Select icons';
 }
 
 abstract class AppErrors {
   static const String timeIsWrong = 'The time is wrong. Try again.';
-  static const String incorrectTime= 'Incorrect time';
+  static const String incorrectTime = 'Incorrect time';
+  static const String hoursMustBeLess = 'Hours must be less than 24';
+  static const String minutesMustBeLess = 'It should be less than 60 minutes';
   static const String unknownError =
       'An unknown error has occurred, please report this error to support';
 }

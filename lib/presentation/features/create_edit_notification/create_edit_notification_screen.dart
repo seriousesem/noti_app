@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:noti_app/presentation/widgets/app_bar.dart';
 import 'package:noti_app/utils/constants.dart';
+import 'package:path/path.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../di/injection_container.dart';
 import '../../../domain/models/notification/notification_model.dart';
@@ -287,7 +288,7 @@ class _TimeInputWidget extends StatelessWidget {
 }
 
 class _SelectIconPlaceholderWidget extends StatelessWidget {
-  const _SelectIconPlaceholderWidget({super.key});
+  const _SelectIconPlaceholderWidget();
 
   @override
   Widget build(BuildContext context) {
@@ -316,6 +317,11 @@ class _IconPreviewWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<CreateOrEditNotificationBloc,
         CreateOrEditNotificationsState>(
+      buildWhen: (previous, current) =>
+          previous.notification?.iconAssets !=
+              current.notification?.iconAssets ||
+          previous.notification?.iconBackgroundColor !=
+              current.notification?.iconBackgroundColor,
       builder: (_, state) => Padding(
         padding: const EdgeInsets.only(right: 16),
         child: Container(
@@ -366,16 +372,28 @@ class _SelectIconButtonWidget extends StatelessWidget {
     return SizedBox(
       height: 40,
       child: OutlinedButton(
-          onPressed: () {},
-          child: const Text(
-            WidgetsText.selectIcon,
-            style: TextStyle(
-              color: AppColors.primaryActive,
-              fontSize: 14,
-              fontFamily: 'Roboto',
-              fontWeight: FontWeight.w700,
-            ),
-          )),
+        onPressed: () {
+          showModalBottomSheet(
+              context: context,
+              builder: (innerContext) {
+                return BlocProvider.value(
+                  value: context.read<CreateOrEditNotificationBloc>(),
+                  child: const _IconStyleBottomSheetWidget(),
+                );
+              },
+              isDismissible: false,
+              backgroundColor: AppColors.mainWhite);
+        },
+        child: const Text(
+          WidgetsText.selectIcon,
+          style: TextStyle(
+            color: AppColors.primaryActive,
+            fontSize: 14,
+            fontFamily: 'Roboto',
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ),
     );
   }
 }
@@ -439,6 +457,258 @@ class _ConfirmButtonWidget extends StatelessWidget {
                 .add(CreateNotificationEvent(context: context));
           },
         );
+      },
+    );
+  }
+}
+
+class _IconStyleBottomSheetWidget extends StatelessWidget {
+  const _IconStyleBottomSheetWidget();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                WidgetsText.iconStyle,
+                style: TextStyle(
+                  color: AppColors.mainDark,
+                  fontSize: 20,
+                  fontFamily: 'Roboto',
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              SizedBox(
+                width: 30,
+                height: 30,
+                child: IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  padding: EdgeInsets.zero,
+                  icon: SvgPicture.asset(
+                    IconsAssets.cancelCircle,
+                    width: 30,
+                    height: 30,
+                    colorFilter: const ColorFilter.mode(
+                        AppColors.primaryActive, BlendMode.srcIn),
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Divider(
+            color: AppColors.lightGrey,
+          ),
+        ),
+        const Padding(
+          padding: EdgeInsets.all(16),
+          child: Text(
+            WidgetsText.backgroundColors,
+            style: TextStyle(
+              color: AppColors.darkGrey,
+              fontSize: 16,
+              fontFamily: 'Roboto',
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        const _IconBackgroundColorsListWidget(),
+        const Padding(
+          padding: EdgeInsets.all(16),
+          child: Text(
+            WidgetsText.selectIcons,
+            style: TextStyle(
+              color: AppColors.darkGrey,
+              fontSize: 16,
+              fontFamily: 'Roboto',
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        const _IconsListWidget(),
+        const Spacer(),
+        const _SaveChangesButtonWidget(),
+        const SizedBox(height: 32)
+      ],
+    );
+  }
+}
+
+class _IconBackgroundColorsListWidget extends StatelessWidget {
+  const _IconBackgroundColorsListWidget();
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 70,
+      child: ListView.builder(
+        itemCount: iconBackgroundColors.length,
+        scrollDirection: Axis.horizontal,
+        itemBuilder: (_, index) {
+          return _IconBackgroundColorItemWidget(
+            iconBackgroundColor: iconBackgroundColors.keys.elementAt(index),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _IconBackgroundColorItemWidget extends StatelessWidget {
+  const _IconBackgroundColorItemWidget({required this.iconBackgroundColor});
+
+  final String iconBackgroundColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<CreateOrEditNotificationBloc,
+        CreateOrEditNotificationsState>(
+      builder: (context, state) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 6),
+          child: IconButton(
+            onPressed: () {
+              context
+                  .read<CreateOrEditNotificationBloc>()
+                  .add(IconBackgroundColorSelectedEvent(iconBackgroundColor));
+            },
+            icon: Container(
+              width: 70,
+              height: 70,
+              padding: const EdgeInsets.all(2),
+              decoration:
+                  state.selectedIconBackgroundColor == iconBackgroundColor
+                      ? const ShapeDecoration(
+                          shape: OvalBorder(
+                            side: BorderSide(
+                                width: 3, color: AppColors.primaryActive),
+                          ),
+                        )
+                      : null,
+              child: Container(
+                width: 60,
+                height: 60,
+                decoration: ShapeDecoration(
+                  color: iconBackgroundColors[iconBackgroundColor],
+                  shape: const OvalBorder(
+                    side: BorderSide(width: 1, color: AppColors.lightGrey),
+                  ),
+                ),
+              ),
+            ),
+            padding: EdgeInsets.zero,
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _IconsListWidget extends StatelessWidget {
+  const _IconsListWidget();
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 70,
+      child: ListView.builder(
+        itemCount: allIconsAssets.length,
+        scrollDirection: Axis.horizontal,
+        itemBuilder: (_, index) {
+          return _IconItemWidget(
+            iconAssets: allIconsAssets.elementAt(index),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _IconItemWidget extends StatelessWidget {
+  const _IconItemWidget({required this.iconAssets});
+
+  final String iconAssets;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<CreateOrEditNotificationBloc,
+        CreateOrEditNotificationsState>(
+      builder: (context, state) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 6),
+          child: IconButton(
+            onPressed: () {
+              context
+                  .read<CreateOrEditNotificationBloc>()
+                  .add(IconSelectedEvent(iconAssets));
+            },
+            icon: Container(
+              width: 70,
+              height: 70,
+              padding: const EdgeInsets.all(2),
+              decoration: state.selectedIcon == iconAssets
+                  ? const ShapeDecoration(
+                      shape: OvalBorder(
+                        side: BorderSide(
+                            width: 3, color: AppColors.primaryActive),
+                      ),
+                    )
+                  : null,
+              child: Container(
+                width: 60,
+                height: 60,
+                decoration: const ShapeDecoration(
+                  shape: OvalBorder(
+                    side: BorderSide(width: 1, color: AppColors.lightGrey),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(
+                      iconAssets,
+                      width: 40,
+                      height: 40,
+                      colorFilter: const ColorFilter.mode(
+                          AppColors.primaryActive, BlendMode.srcIn),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            padding: EdgeInsets.zero,
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _SaveChangesButtonWidget extends StatelessWidget {
+  const _SaveChangesButtonWidget();
+
+  @override
+  Widget build(BuildContext context) {
+    return buildElevatedButtonWithoutIcon(
+      buttonText: WidgetsText.saveChanges,
+      isActive: true,
+      buttonAction: () {
+        context
+            .read<CreateOrEditNotificationBloc>()
+            .add(const IconStyleSavedEvent());
+        Navigator.pop(context);
       },
     );
   }

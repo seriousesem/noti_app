@@ -14,8 +14,10 @@ class LoadingEvent extends CreateOrEditNotificationEvent {
   const LoadingEvent();
 }
 
-final class InitializeAddNotificationEvent extends CreateOrEditNotificationEvent {
+final class InitializeAddNotificationEvent
+    extends CreateOrEditNotificationEvent {
   const InitializeAddNotificationEvent({required this.notification});
+
   final NotificationModel notification;
 }
 
@@ -58,13 +60,27 @@ final class SecondMinuteChangedEvent extends CreateOrEditNotificationEvent {
   final String secondMinute;
   final BuildContext context;
 }
+
 final class MessageChangedEvent extends CreateOrEditNotificationEvent {
   const MessageChangedEvent(this.message, this.context);
 
   final String message;
   final BuildContext context;
 }
-// final class CheckTimeCorrectnessEvent extends CreateOrEditNotificationEvent {
-//   const CheckTimeCorrectnessEvent(this.context);
-//   final BuildContext context;
-// }
+
+final class IconSelectedEvent extends CreateOrEditNotificationEvent {
+  const IconSelectedEvent(this.iconAssets);
+
+  final String iconAssets;
+}
+
+final class IconBackgroundColorSelectedEvent
+    extends CreateOrEditNotificationEvent {
+  const IconBackgroundColorSelectedEvent(this.iconBackgroundColor);
+
+  final String iconBackgroundColor;
+}
+
+class IconStyleSavedEvent extends CreateOrEditNotificationEvent {
+  const IconStyleSavedEvent();
+}

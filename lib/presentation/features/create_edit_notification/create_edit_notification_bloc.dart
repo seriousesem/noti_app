@@ -21,6 +21,9 @@ class CreateOrEditNotificationBloc extends Bloc<CreateOrEditNotificationEvent,
     on<MessageChangedEvent>(_changeMessage);
     on<CreateNotificationEvent>(_addNotification);
     on<EditNotificationEvent>(_editNotification);
+    on<IconSelectedEvent>(_selectIcon);
+    on<IconBackgroundColorSelectedEvent>(_selectIconBackgroundColor);
+    on<IconStyleSavedEvent>(_saveIconStyle);
   }
 
   final NotificationsRepository _repository;
@@ -156,7 +159,7 @@ class CreateOrEditNotificationBloc extends Bloc<CreateOrEditNotificationEvent,
   _checkFirstHourCorrectness(Emitter<CreateOrEditNotificationsState> emit) {
     if (!['0', '1', '2'].contains(state.timeModel.firstHour)) {
       emit(state.copyWith(
-        error: AppErrors.incorrectTime,
+        error: AppErrors.hoursMustBeLess,
       ));
     } else {
       emit(state.copyWith(
@@ -169,7 +172,7 @@ class CreateOrEditNotificationBloc extends Bloc<CreateOrEditNotificationEvent,
     if (!(state.timeModel.firstHour == '2' &&
         ['0', '1', '2', '3', '4'].contains(state.timeModel.secondHour))) {
       emit(state.copyWith(
-        error: AppErrors.incorrectTime,
+        error: AppErrors.hoursMustBeLess,
       ));
     } else {
       emit(state.copyWith(
@@ -179,15 +182,32 @@ class CreateOrEditNotificationBloc extends Bloc<CreateOrEditNotificationEvent,
   }
 
   _checkFirstMinuteCorrectness(Emitter<CreateOrEditNotificationsState> emit) {
-    if (!['0', '1', '2', '3', '4', '5']
-        .contains(state.timeModel.firstMinute)) {
+    if (!['0', '1', '2', '3', '4', '5'].contains(state.timeModel.firstMinute)) {
       emit(state.copyWith(
-        error: AppErrors.incorrectTime,
+        error: AppErrors.minutesMustBeLess,
       ));
     } else {
       emit(state.copyWith(
         error: '',
       ));
     }
+  }
+
+  _selectIcon(
+      IconSelectedEvent event, Emitter<CreateOrEditNotificationsState> emit) {
+    emit(state.copyWith(selectedIcon: event.iconAssets));
+  }
+
+  _selectIconBackgroundColor(IconBackgroundColorSelectedEvent event,
+      Emitter<CreateOrEditNotificationsState> emit) {
+    emit(state.copyWith(selectedIconBackgroundColor: event.iconBackgroundColor));
+  }
+
+  _saveIconStyle(
+      IconStyleSavedEvent event, Emitter<CreateOrEditNotificationsState> emit) {
+    emit(state.copyWith(
+        notification: state.notification?.copyWith(
+            iconAssets: state.selectedIcon,
+            iconBackgroundColor: state.selectedIconBackgroundColor)));
   }
 }
