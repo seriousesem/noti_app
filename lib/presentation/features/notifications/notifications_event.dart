@@ -14,8 +14,8 @@ class LoadingEvent extends NotificationsEvent {
   const LoadingEvent();
 }
 
-class FetchOneTimeNotificationsEvent extends NotificationsEvent {
-  const FetchOneTimeNotificationsEvent();
+class FetchNotificationsEvent extends NotificationsEvent {
+  const FetchNotificationsEvent();
 }
 
 class SwitchNotificationsTypeEvent extends NotificationsEvent {

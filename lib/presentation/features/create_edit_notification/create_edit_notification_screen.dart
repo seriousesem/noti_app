@@ -17,15 +17,17 @@ import 'create_edit_notification_event.dart';
 import 'create_edit_notification_state.dart';
 
 class CreateOrEditNotificationScreen extends StatelessWidget {
-  const CreateOrEditNotificationScreen({super.key, required this.notification});
+  const CreateOrEditNotificationScreen(
+      {super.key, required this.notification, required this.callBack});
 
   final NotificationModel notification;
+  final Function() callBack;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<CreateOrEditNotificationBloc>(
       create: (BuildContext context) => getIt()
-        ..add(InitializeAddNotificationEvent(notification: notification)),
+        ..add(InitializeStateEvent(notification: notification)),
       child: Builder(
         builder: (context) => Scaffold(
           resizeToAvoidBottomInset: false,
@@ -35,7 +37,7 @@ class CreateOrEditNotificationScreen extends StatelessWidget {
                 : WidgetsText.addNotification,
             leading: buildButtonBackWidget(context: context),
           ),
-          body: const _CreateOrEditNotificationScreenWidget(),
+          body: _CreateOrEditNotificationScreenWidget(callBack: callBack),
         ),
       ),
     );
@@ -43,7 +45,9 @@ class CreateOrEditNotificationScreen extends StatelessWidget {
 }
 
 class _CreateOrEditNotificationScreenWidget extends StatelessWidget {
-  const _CreateOrEditNotificationScreenWidget();
+  const _CreateOrEditNotificationScreenWidget({required this.callBack});
+
+  final Function() callBack;
 
   @override
   Widget build(BuildContext context) {
@@ -54,13 +58,13 @@ class _CreateOrEditNotificationScreenWidget extends StatelessWidget {
         child: Column(
           children: [
             const _MessageWidget(),
-            state.notification?.type == NotificationsType.oneTime
+            state.notification?.type == NotificationType.oneTime
                 ? const _TimePlaceholderWidget()
                 : const SizedBox.shrink(),
             const _SelectIconPlaceholderWidget(),
             const Spacer(),
             const _ErrorMessageWidget(),
-            const _ConfirmButtonWidget(),
+            _ConfirmButtonWidget(callBack: callBack),
           ],
         ),
       ),
@@ -75,52 +79,62 @@ class _MessageWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<CreateOrEditNotificationBloc,
         CreateOrEditNotificationsState>(
-      builder: (_, state) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const _TitleWidget(title: WidgetsText.message),
-            TextFormField(
-              keyboardType: TextInputType.text,
-              buildCounter: null,
-              onChanged: (message) => context
-                  .read<CreateOrEditNotificationBloc>()
-                  .add(
-                    MessageChangedEvent(message = message, context = context),
+      buildWhen: (previous, current) =>
+          previous.notification?.message != current.notification?.message,
+      builder: (_, state) {
+        final messageController =
+            TextEditingController(text: state.notification?.message);
+        messageController.selection =
+            TextSelection.collapsed(offset: messageController.text.length);
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const _TitleWidget(title: WidgetsText.message),
+              TextFormField(
+                controller: messageController,
+                keyboardType: TextInputType.text,
+                buildCounter: null,
+                onChanged: (message) => context
+                    .read<CreateOrEditNotificationBloc>()
+                    .add(
+                      MessageChangedEvent(message = message, context = context),
+                    ),
+                maxLines: 4,
+                decoration: InputDecoration(
+                  filled: true,
+                  hintText: WidgetsText.enterMessage,
+                  hintStyle: const TextStyle(
+                    color: AppColors.greyB8,
+                    fontSize: 16,
+                    fontFamily: 'Roboto',
+                    fontWeight: FontWeight.w400,
                   ),
-              maxLines: 4,
-              decoration: InputDecoration(
-                filled: true,
-                hintText: WidgetsText.enterMessage,
-                hintStyle: const TextStyle(
-                  color: AppColors.greyB8,
+                  fillColor: AppColors.mainWhite,
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: AppColors.lightGrey),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide:
+                        const BorderSide(color: AppColors.primaryActive),
+                  ),
+                  counterText: "",
+                  contentPadding: const EdgeInsets.all(16),
+                ),
+                style: const TextStyle(
+                  color: AppColors.mainDark,
                   fontSize: 16,
                   fontFamily: 'Roboto',
                   fontWeight: FontWeight.w400,
                 ),
-                fillColor: AppColors.mainWhite,
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: const BorderSide(color: AppColors.lightGrey),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: const BorderSide(color: AppColors.primaryActive),
-                ),
-                counterText: "",
-                contentPadding: const EdgeInsets.all(16),
               ),
-              style: const TextStyle(
-                color: AppColors.mainDark,
-                fontSize: 16,
-                fontFamily: 'Roboto',
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-          ],
-        ),
-      ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
@@ -179,6 +193,7 @@ class _FirstHourWidget extends StatelessWidget {
             .add(
               FirstHourChangedEvent(firstHour = firstHour, context = context),
             ),
+        initialValue: state.timeModel.firstHour,
       ),
     );
   }
@@ -197,6 +212,7 @@ class _SecondHourWidget extends StatelessWidget {
             .read<CreateOrEditNotificationBloc>()
             .add(SecondHourChangedEvent(
                 secondHour = secondHour, context = context)),
+        initialValue: state.timeModel.secondHour,
       ),
     );
   }
@@ -215,6 +231,7 @@ class _FirstMinuteWidget extends StatelessWidget {
             .read<CreateOrEditNotificationBloc>()
             .add(FirstMinuteChangedEvent(
                 firstMinute = firstMinute, context = context)),
+        initialValue: state.timeModel.firstMinute,
       ),
     );
   }
@@ -233,6 +250,7 @@ class _SecondMinuteWidget extends StatelessWidget {
             .read<CreateOrEditNotificationBloc>()
             .add(SecondMinuteChangedEvent(
                 secondMinute = secondMinute, context = context)),
+        initialValue: state.timeModel.secondMinute,
       ),
     );
   }
@@ -240,8 +258,11 @@ class _SecondMinuteWidget extends StatelessWidget {
 
 class _TimeInputWidget extends StatelessWidget {
   const _TimeInputWidget(
-      {required this.onChangeAction, required this.focusNode});
+      {required this.onChangeAction,
+      required this.focusNode,
+      required this.initialValue});
 
+  final String initialValue;
   final FocusNode? focusNode;
   final Function(String value) onChangeAction;
 
@@ -253,6 +274,7 @@ class _TimeInputWidget extends StatelessWidget {
         width: 44,
         height: 48,
         child: TextFormField(
+          initialValue: initialValue,
           onChanged: (value) {
             onChangeAction(value);
           },
@@ -435,26 +457,35 @@ class _ErrorMessageWidget extends StatelessWidget {
 }
 
 class _ConfirmButtonWidget extends StatelessWidget {
-  const _ConfirmButtonWidget();
+  const _ConfirmButtonWidget({required this.callBack});
+
+  final Function() callBack;
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CreateOrEditNotificationBloc,
         CreateOrEditNotificationsState>(
       builder: (context, state) {
-        final isActive = state.timeModel.firstHour.isNotEmpty &&
+        final isActive = state.notification != null
+        ? state.notification?.type == NotificationType.oneTime
+            ? state.timeModel.firstHour.isNotEmpty &&
             state.timeModel.secondHour.isNotEmpty &&
             state.timeModel.firstMinute.isNotEmpty &&
             state.timeModel.secondMinute.isNotEmpty &&
             state.notification!.message.isNotEmpty &&
-            state.error.isEmpty;
+            state.error.isEmpty
+        : state.notification!.message.isNotEmpty &&
+            state.currentTime.isNotEmpty &&
+            state.error.isEmpty
+        : false;
         return buildElevatedButtonWithoutIcon(
           buttonText: WidgetsText.confirm,
           isActive: isActive,
           buttonAction: () {
             context
                 .read<CreateOrEditNotificationBloc>()
-                .add(CreateNotificationEvent(context: context));
+                .add(ConfirmedEvent(callback: callBack));
+            Navigator.pop(context);
           },
         );
       },

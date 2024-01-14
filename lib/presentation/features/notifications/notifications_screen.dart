@@ -24,7 +24,7 @@ class NotificationsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<NotificationsBloc>(
       create: (BuildContext context) =>
-          getIt()..add(const FetchOneTimeNotificationsEvent()),
+          getIt()..add(const FetchNotificationsEvent()),
       child: Builder(
         builder: (context) => Scaffold(
           appBar: buildAppBar(
@@ -48,7 +48,7 @@ class _NotificationsScreenWidget extends StatelessWidget {
         child: Column(
           children: [
             const NotificationsTypeSwitcherWidget(),
-            state.selectedNotificationsType == NotificationsType.oneTime
+            state.selectedNotificationsType == NotificationType.oneTime
                 ? const _OneTimeNotificationsWidget()
                 : const _RecurringTypesListWidget(),
           ],
@@ -101,20 +101,20 @@ class _OneTimeButtonWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<NotificationsBloc, NotificationsState>(
       builder: (_, state) =>
-          state.selectedNotificationsType == NotificationsType.oneTime
+          state.selectedNotificationsType == NotificationType.oneTime
               ? buildSmallElevatedButtonWithIcon(
                   buttonText: WidgetsText.oneTime,
                   iconAssets: IconsAssets.timer,
                   buttonAction: () => context.read<NotificationsBloc>().add(
                       const SwitchNotificationsTypeEvent(
-                          notificationsType: NotificationsType.oneTime)),
+                          notificationsType: NotificationType.oneTime)),
                 )
               : buildSmallOutlinedButtonWithIcon(
                   buttonText: WidgetsText.oneTime,
                   iconAssets: IconsAssets.timer,
                   buttonAction: () => context.read<NotificationsBloc>().add(
                       const SwitchNotificationsTypeEvent(
-                          notificationsType: NotificationsType.oneTime)),
+                          notificationsType: NotificationType.oneTime)),
                 ),
     );
   }
@@ -127,20 +127,20 @@ class _RecurringButtonWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<NotificationsBloc, NotificationsState>(
       builder: (_, state) =>
-          state.selectedNotificationsType == NotificationsType.recurring
+          state.selectedNotificationsType == NotificationType.recurring
               ? buildSmallElevatedButtonWithIcon(
                   buttonText: WidgetsText.recurring,
                   iconAssets: IconsAssets.history,
                   buttonAction: () => context.read<NotificationsBloc>().add(
                       const SwitchNotificationsTypeEvent(
-                          notificationsType: NotificationsType.recurring)),
+                          notificationsType: NotificationType.recurring)),
                 )
               : buildSmallOutlinedButtonWithIcon(
                   buttonText: WidgetsText.recurring,
                   iconAssets: IconsAssets.history,
                   buttonAction: () => context.read<NotificationsBloc>().add(
                       const SwitchNotificationsTypeEvent(
-                          notificationsType: NotificationsType.recurring)),
+                          notificationsType: NotificationType.recurring)),
                 ),
     );
   }
@@ -152,6 +152,7 @@ class _OneTimeNotificationsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<NotificationsBloc, NotificationsState>(
+        buildWhen: (previous, current) => previous.notifications != current.notifications,
         builder: (_, state) {
       if (state is NotificationsStateLoading) {
         return const Expanded(
@@ -163,7 +164,7 @@ class _OneTimeNotificationsWidget extends StatelessWidget {
           child: Column(
             children: [
               _NotificationsListWidget(
-                oneTimeNotifications: state.oneTimeNotifications ?? [],
+                oneTimeNotifications: state.notifications ?? [],
               ),
               const _AddNotificationButton(),
             ],
@@ -177,7 +178,7 @@ class _OneTimeNotificationsWidget extends StatelessWidget {
             yesButtonAction: () {
               context
                   .read<NotificationsBloc>()
-                  .add(const FetchOneTimeNotificationsEvent());
+                  .add(const FetchNotificationsEvent());
             },
           ),
         );

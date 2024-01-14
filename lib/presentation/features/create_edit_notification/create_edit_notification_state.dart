@@ -6,7 +6,6 @@ import '../../../domain/models/time/time_model.dart';
 final class CreateOrEditNotificationsState extends Equatable {
   const CreateOrEditNotificationsState({
     this.notification,
-    this.notificationId,
     this.currentTime = '',
     this.timeModel = const TimeModel(),
     this.selectedIcon = '',
@@ -15,7 +14,6 @@ final class CreateOrEditNotificationsState extends Equatable {
   });
 
   final NotificationModel? notification;
-  final int? notificationId;
   final String currentTime;
   final TimeModel timeModel;
   final String selectedIconBackgroundColor;
@@ -24,7 +22,6 @@ final class CreateOrEditNotificationsState extends Equatable {
 
   CreateOrEditNotificationsState copyWith({
     NotificationModel? notification,
-    int? notificationId,
     String? currentTime,
     TimeModel? timeModel,
     String? selectedIconBackgroundColor,
@@ -33,7 +30,6 @@ final class CreateOrEditNotificationsState extends Equatable {
   }) =>
       CreateOrEditNotificationsState(
         notification: notification ?? this.notification,
-        notificationId: notificationId ?? this.notificationId,
         currentTime: currentTime ?? this.currentTime,
         timeModel: timeModel ?? this.timeModel,
         selectedIconBackgroundColor:
@@ -45,7 +41,6 @@ final class CreateOrEditNotificationsState extends Equatable {
   @override
   List<Object?> get props => [
         notification,
-        notificationId,
         currentTime,
         timeModel,
         selectedIconBackgroundColor,
@@ -61,8 +56,7 @@ final class CreateOrEditNotificationsStateLoading
 
 final class CreateOrEditNotificationsStateSuccess
     extends CreateOrEditNotificationsState {
-  const CreateOrEditNotificationsStateSuccess({required int notificationId})
-      : super(notificationId: notificationId);
+  const CreateOrEditNotificationsStateSuccess();
 }
 
 final class CreateOrEditNotificationsStateError

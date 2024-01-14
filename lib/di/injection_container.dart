@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:noti_app/presentation/features/login/login_bloc.dart';
 import 'package:noti_app/presentation/features/notifications/notifications_bloc.dart';
+import 'package:noti_app/presentation/features/recurring_notifications/recurring_notifications_bloc.dart';
 
 import '../data/database/database_service.dart';
 import '../data/repository/notifications_repository_impl.dart';
@@ -27,5 +28,8 @@ Future<void> initializeDependencies() async {
   );
   getIt.registerFactory<CreateOrEditNotificationBloc>(
     () => CreateOrEditNotificationBloc(getIt()),
+  );
+  getIt.registerFactory<RecurringNotificationsBloc>(
+        () => RecurringNotificationsBloc(getIt()),
   );
 }

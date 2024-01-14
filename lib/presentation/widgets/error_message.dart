@@ -24,6 +24,7 @@ buildErrorMessageWidget({required String errorMessage}) {
                     padding: const EdgeInsets.only(left: 6),
                     child: Text(
                       errorMessage,
+                      maxLines: 5,
                       style: const TextStyle(
                         color: AppColors.mainRed,
                         fontSize: 14,

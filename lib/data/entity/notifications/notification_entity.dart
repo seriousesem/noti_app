@@ -45,7 +45,7 @@ class NotificationEntity {
       NotificationEntity(
         id: notificationModel.id,
         type: notificationModel.type,
-        recurringType: notificationModel.recurringType,
+        recurringType: notificationModel.recurringNotificationType,
         time: notificationModel.time,
         message: notificationModel.message,
         iconAssets: notificationModel.iconAssets,
@@ -55,7 +55,7 @@ class NotificationEntity {
   NotificationModel toModel() => NotificationModel(
         id: id,
         type: type,
-        recurringType: recurringType,
+        recurringNotificationType: recurringType,
         time: time,
         message: message,
         iconAssets: iconAssets,

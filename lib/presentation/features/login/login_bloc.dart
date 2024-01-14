@@ -104,8 +104,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   }
 
   _checkSecondHourCorrectness(Emitter<LoginState> emit) {
-    if (!(state.timeModel.firstHour == '2' &&
-        ['0', '1', '2', '3', '4'].contains(state.timeModel.secondHour))) {
+    if (state.timeModel.firstHour == '2' &&
+        !['0', '1', '2', '3', '4'].contains(state.timeModel.secondHour)) {
       emit(state.copyWith(
         error: AppErrors.hoursMustBeLess,
       ));

@@ -13,22 +13,21 @@ class CreateOrEditNotificationBloc extends Bloc<CreateOrEditNotificationEvent,
     CreateOrEditNotificationsState> {
   CreateOrEditNotificationBloc(this._repository)
       : super(const CreateOrEditNotificationsState()) {
-    on<InitializeAddNotificationEvent>(_initializeLoginState);
+    on<InitializeStateEvent>(_initializeLoginState);
     on<FirstHourChangedEvent>(_changeFirstHour);
     on<SecondHourChangedEvent>(_changeSecondHour);
     on<FirstMinuteChangedEvent>(_changeFirstMinute);
     on<SecondMinuteChangedEvent>(_changeSecondMinute);
     on<MessageChangedEvent>(_changeMessage);
-    on<CreateNotificationEvent>(_addNotification);
-    on<EditNotificationEvent>(_editNotification);
     on<IconSelectedEvent>(_selectIcon);
     on<IconBackgroundColorSelectedEvent>(_selectIconBackgroundColor);
     on<IconStyleSavedEvent>(_saveIconStyle);
+    on<ConfirmedEvent>(_confirm);
   }
 
   final NotificationsRepository _repository;
 
-  _initializeLoginState(InitializeAddNotificationEvent event,
+  _initializeLoginState(InitializeStateEvent event,
       Emitter<CreateOrEditNotificationsState> emit) async {
     final currentDateTime = DateTime.now();
     final currentTime = DateFormat('HH:mm').format(currentDateTime);
@@ -47,37 +46,6 @@ class CreateOrEditNotificationBloc extends Bloc<CreateOrEditNotificationEvent,
                 firstMinuteFocusNode: FocusNode(),
                 secondMinuteFocusNode: FocusNode(),
               )));
-  }
-
-  _addNotification(CreateNotificationEvent event,
-      Emitter<CreateOrEditNotificationsState> emit) async {
-    final notification = NotificationModel(
-      type: NotificationsType.oneTime,
-      time: DateTime.now().toString(),
-      message: "message",
-    );
-    final requestResult = await _repository.addNotification(notification);
-    if (requestResult is RequestResultError) {
-      emit(CreateOrEditNotificationsStateError(
-          error: requestResult.error ?? AppErrors.unknownError));
-    }
-    if (requestResult is RequestResultSuccess) {
-      ScaffoldMessenger.of(event.context)
-          .showSnackBar(const SnackBar(content: Text('Notification created')));
-    }
-  }
-
-  _editNotification(EditNotificationEvent event,
-      Emitter<CreateOrEditNotificationsState> emit) async {
-    final requestResult =
-        await _repository.editNotification(event.notification);
-    if (requestResult is RequestResultError) {
-      emit(CreateOrEditNotificationsStateError(
-          error: requestResult.error ?? AppErrors.unknownError));
-    }
-    if (requestResult is RequestResultSuccess) {
-      // ScaffoldMessenger.of(event.context).showSnackBar(const SnackBar(content: Text('Notification created')));
-    }
   }
 
   _changeFirstHour(FirstHourChangedEvent event,
@@ -169,8 +137,8 @@ class CreateOrEditNotificationBloc extends Bloc<CreateOrEditNotificationEvent,
   }
 
   _checkSecondHourCorrectness(Emitter<CreateOrEditNotificationsState> emit) {
-    if (!(state.timeModel.firstHour == '2' &&
-        ['0', '1', '2', '3', '4'].contains(state.timeModel.secondHour))) {
+    if (state.timeModel.firstHour == '2' &&
+        !['0', '1', '2', '3', '4'].contains(state.timeModel.secondHour)) {
       emit(state.copyWith(
         error: AppErrors.hoursMustBeLess,
       ));
@@ -200,7 +168,8 @@ class CreateOrEditNotificationBloc extends Bloc<CreateOrEditNotificationEvent,
 
   _selectIconBackgroundColor(IconBackgroundColorSelectedEvent event,
       Emitter<CreateOrEditNotificationsState> emit) {
-    emit(state.copyWith(selectedIconBackgroundColor: event.iconBackgroundColor));
+    emit(
+        state.copyWith(selectedIconBackgroundColor: event.iconBackgroundColor));
   }
 
   _saveIconStyle(
@@ -209,5 +178,52 @@ class CreateOrEditNotificationBloc extends Bloc<CreateOrEditNotificationEvent,
         notification: state.notification?.copyWith(
             iconAssets: state.selectedIcon,
             iconBackgroundColor: state.selectedIconBackgroundColor)));
+  }
+
+  _confirm(ConfirmedEvent event,
+      Emitter<CreateOrEditNotificationsState> emit) async {
+    if (state.notification?.id != null) {
+      final notification = NotificationModel(
+        id: state.notification?.id,
+        type: state.notification!.type,
+        recurringNotificationType: state.notification?.recurringNotificationType,
+        time: state.notification?.type == NotificationType.oneTime
+            ? state.timeModel.toString()
+            : state.notification?.time ?? state.currentTime,
+        message: state.notification!.message,
+        iconAssets: state.notification?.iconAssets,
+        iconBackgroundColor: state.notification?.iconBackgroundColor,
+      );
+      final requestResult = await _repository.editNotification(notification);
+      if(requestResult is RequestResultSuccess){
+        await event.callback();
+      }
+      if(requestResult is RequestResultError){
+        emit(state.copyWith(
+          error: requestResult.error
+        ));
+      }
+    } else {
+      final notification = NotificationModel(
+        id: state.notification?.id,
+        type: state.notification!.type,
+        recurringNotificationType: state.notification?.recurringNotificationType,
+        time: state.notification?.type == NotificationType.oneTime
+        ? state.timeModel.toString()
+        : state.currentTime,
+        message: state.notification!.message,
+        iconAssets: state.notification?.iconAssets,
+        iconBackgroundColor: state.notification?.iconBackgroundColor,
+      );
+      final requestResult = await _repository.createNotification(notification);
+      if(requestResult is RequestResultSuccess){
+        await event.callback();
+      }
+      if(requestResult is RequestResultError){
+        emit(state.copyWith(
+            error: requestResult.error
+        ));
+      }
+    }
   }
 }

@@ -25,7 +25,7 @@ class NotificationsRepositoryImpl implements NotificationsRepository {
   }
 
   @override
-  Future<RequestResult<int>> addNotification(
+  Future<RequestResult<int>> createNotification(
       NotificationModel notificationModel) async {
     try {
       final notificationId = await _dataBaseService

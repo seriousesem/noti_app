@@ -4,7 +4,7 @@ final class NotificationModel extends Equatable {
   const NotificationModel({
     this.id,
     required this.type,
-    this.recurringType,
+    this.recurringNotificationType,
     required this.time,
     required this.message,
     this.iconAssets,
@@ -13,7 +13,7 @@ final class NotificationModel extends Equatable {
 
   final int? id;
   final String type;
-  final String? recurringType;
+  final String? recurringNotificationType;
   final String time;
   final String message;
   final String? iconAssets;
@@ -22,7 +22,7 @@ final class NotificationModel extends Equatable {
   NotificationModel copyWith({
     int? id,
     String? type,
-    String? recurringType,
+    String? recurringNotificationType,
     String? time,
     String? message,
     String? iconAssets,
@@ -31,7 +31,7 @@ final class NotificationModel extends Equatable {
       NotificationModel(
         id: id ?? this.id,
         type: type ?? this.type,
-        recurringType: recurringType ?? this.recurringType,
+        recurringNotificationType: recurringNotificationType ?? this.recurringNotificationType,
         time: time ?? this.time,
         message: message ?? this.message,
         iconAssets: iconAssets ?? this.iconAssets,
@@ -42,7 +42,7 @@ final class NotificationModel extends Equatable {
   List<Object?> get props => [
         id,
         type,
-        recurringType,
+        recurringNotificationType,
         time,
         message,
         iconAssets,

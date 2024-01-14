@@ -31,7 +31,7 @@ abstract class AppErrors {
       'An unknown error has occurred, please report this error to support';
 }
 
-abstract class NotificationsType {
+abstract class NotificationType {
   static const String oneTime = 'one_time';
   static const String recurring = 'Recurring';
 }
@@ -50,4 +50,8 @@ abstract class NotificationEntityKey {
   static const String message = 'message';
   static const String iconAssets = 'icon_assets';
   static const String iconBackgroundColor = 'icon_background_color';
+}
+abstract class MapKey {
+  static const String notification = 'notification';
+  static const String callBack = 'callBack';
 }

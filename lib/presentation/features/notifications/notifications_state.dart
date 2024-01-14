@@ -5,30 +5,30 @@ import '../../../utils/constants.dart';
 
 final class NotificationsState extends Equatable {
   const NotificationsState({
-    this.selectedNotificationsType = NotificationsType.oneTime,
-    this.oneTimeNotifications,
+    this.selectedNotificationsType = NotificationType.oneTime,
+    this.notifications,
     this.error,
   });
 
   final String selectedNotificationsType;
-  final List<NotificationModel>? oneTimeNotifications;
+  final List<NotificationModel>? notifications;
   final String? error;
 
   NotificationsState copyWith({
     String? selectedNotificationsType,
-    List<NotificationModel>? oneTimeNotifications,
+    List<NotificationModel>? notifications,
     String? error,
   }) =>
       NotificationsState(
         selectedNotificationsType:
             selectedNotificationsType ?? this.selectedNotificationsType,
-        oneTimeNotifications: oneTimeNotifications ?? this.oneTimeNotifications,
+        notifications: notifications ?? this.notifications,
         error: error ?? this.error,
       );
 
   @override
   List<Object?> get props =>
-      [selectedNotificationsType, oneTimeNotifications, error];
+      [selectedNotificationsType, notifications, error];
 }
 
 final class NotificationsStateLoading extends NotificationsState {
@@ -37,8 +37,8 @@ final class NotificationsStateLoading extends NotificationsState {
 
 final class NotificationsStateSuccess extends NotificationsState {
   const NotificationsStateSuccess(
-      {required List<NotificationModel> oneTimeNotifications})
-      : super(oneTimeNotifications: oneTimeNotifications);
+      {required List<NotificationModel> notifications})
+      : super(notifications: notifications);
 }
 
 final class NotificationsStateError extends NotificationsState {

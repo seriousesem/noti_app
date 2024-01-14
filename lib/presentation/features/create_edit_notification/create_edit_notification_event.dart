@@ -14,21 +14,9 @@ class LoadingEvent extends CreateOrEditNotificationEvent {
   const LoadingEvent();
 }
 
-final class InitializeAddNotificationEvent
+final class InitializeStateEvent
     extends CreateOrEditNotificationEvent {
-  const InitializeAddNotificationEvent({required this.notification});
-
-  final NotificationModel notification;
-}
-
-class CreateNotificationEvent extends CreateOrEditNotificationEvent {
-  const CreateNotificationEvent({required this.context});
-
-  final BuildContext context;
-}
-
-class EditNotificationEvent extends CreateOrEditNotificationEvent {
-  const EditNotificationEvent({required this.notification});
+  const InitializeStateEvent({required this.notification});
 
   final NotificationModel notification;
 }
@@ -83,4 +71,9 @@ final class IconBackgroundColorSelectedEvent
 
 class IconStyleSavedEvent extends CreateOrEditNotificationEvent {
   const IconStyleSavedEvent();
+}
+
+final class ConfirmedEvent extends CreateOrEditNotificationEvent {
+  const ConfirmedEvent({required this.callback});
+  final Function() callback;
 }

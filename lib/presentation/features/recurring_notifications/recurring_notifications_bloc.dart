@@ -5,52 +5,58 @@ import 'package:noti_app/domain/models/notification/notification_model.dart';
 import 'package:noti_app/domain/repository/notifications_repository.dart';
 import '../../../core/navigation/app_navigation.dart';
 import '../../../utils/constants.dart';
-import 'notifications_event.dart';
-import 'notifications_state.dart';
+import 'recurring_notifications_event.dart';
+import 'recurring_notifications_state.dart';
 
-class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
-  NotificationsBloc(this._repository) : super(const NotificationsState()) {
+class RecurringNotificationsBloc
+    extends Bloc<RecurringNotificationsEvent, RecurringNotificationsState> {
+  RecurringNotificationsBloc(this._repository)
+      : super(const RecurringNotificationsState(recurringNotificationType: '')) {
+    on<InitializeRecurringNotificationsStateEvent>(_initializeState);
     on<FetchNotificationsEvent>(_fetchNotifications);
-    on<SwitchNotificationsTypeEvent>(_switchNotificationsType);
     on<DeleteNotificationEvent>(_deleteNotification);
     on<GoToCreateNotificationEvent>(_goToCreateNotification);
     on<GoToEditNotificationEvent>(_goToEditNotification);
-    on<GoToRecurringNotificationsEvent>(_goToRecurringNotificationsEvent);
   }
 
   final NotificationsRepository _repository;
 
-  _fetchNotifications(
-      FetchNotificationsEvent event, Emitter<NotificationsState> emit) async {
-    emit(const NotificationsStateLoading());
+  _initializeState(InitializeRecurringNotificationsStateEvent event,
+      Emitter<RecurringNotificationsState> emit) async {
+    emit(state.copyWith(
+        recurringNotificationType: event.recurringNotificationType));
+    add(const FetchNotificationsEvent());
+  }
+
+  _fetchNotifications(FetchNotificationsEvent event,
+      Emitter<RecurringNotificationsState> emit) async {
+    emit(RecurringNotificationsStateLoading(
+        recurringNotificationType: state.recurringNotificationType));
     final requestResult = await _repository.fetchAllNotifications();
     if (requestResult is RequestResultError) {
-      emit(NotificationsStateError(
-          error: requestResult.error ?? AppErrors.unknownError));
+      emit(RecurringNotificationsStateError(
+        recurringNotificationType: state.recurringNotificationType,
+        error: requestResult.error ?? AppErrors.unknownError,
+      ));
     }
     if (requestResult is RequestResultSuccess) {
       final List<NotificationModel> notifications = requestResult.data
               ?.where((notifications) =>
-                  notifications.type == NotificationType.oneTime)
+                  notifications.recurringNotificationType ==
+                  state.recurringNotificationType)
               .toList() ??
           List.empty();
-      emit(NotificationsStateSuccess(
+      emit(RecurringNotificationsStateSuccess(
+          recurringNotificationType: state.recurringNotificationType,
           notifications: notifications));
     }
   }
 
-  _switchNotificationsType(SwitchNotificationsTypeEvent event,
-      Emitter<NotificationsState> emit) async {
-    emit(state.copyWith(selectedNotificationsType: event.notificationsType));
-    if (event.notificationsType == NotificationType.oneTime) {
-      add(const FetchNotificationsEvent());
-    }
-  }
-
-  _goToCreateNotification(
-      GoToCreateNotificationEvent event, Emitter<NotificationsState> emit) {
-    const notification = NotificationModel(
-      type: NotificationType.oneTime,
+  _goToCreateNotification(GoToCreateNotificationEvent event,
+      Emitter<RecurringNotificationsState> emit) {
+    final notification = NotificationModel(
+      type: NotificationType.recurring,
+      recurringNotificationType: state.recurringNotificationType,
       time: '',
       message: '',
     );
@@ -66,12 +72,13 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
     );
   }
 
-  _deleteNotification(
-      DeleteNotificationEvent event, Emitter<NotificationsState> emit) async {
+  _deleteNotification(DeleteNotificationEvent event,
+      Emitter<RecurringNotificationsState> emit) async {
     final requestResult =
         await _repository.deleteNotification(event.notification);
     if (requestResult is RequestResultError) {
-      emit(NotificationsStateError(
+      emit(RecurringNotificationsStateError(
+          recurringNotificationType: state.recurringNotificationType,
           error: requestResult.error ?? AppErrors.unknownError));
     }
     if (requestResult is RequestResultSuccess) {
@@ -79,8 +86,8 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
     }
   }
 
-  _goToEditNotification(
-      GoToEditNotificationEvent event, Emitter<NotificationsState> emit) async {
+  _goToEditNotification(GoToEditNotificationEvent event,
+      Emitter<RecurringNotificationsState> emit) async {
     Navigator.pushNamed(
         event.context, AppRoutesNames.createOrEditNotificationScreen,
         arguments: {
@@ -89,10 +96,5 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
             add(const FetchNotificationsEvent());
           },
         });
-  }
-
-  _goToRecurringNotificationsEvent(GoToRecurringNotificationsEvent event,
-      Emitter<NotificationsState> emit) {
-    Navigator.pushNamed(event.context, AppRoutesNames.recurringNotificationsScreen, arguments: event.recurringType);
   }
 }
